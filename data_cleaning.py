@@ -282,12 +282,137 @@ dv['VIOLATION_CATEGORY'] = dv['vc']
 dv.dropna(inplace=True)
 dv.reset_index(drop=True, inplace=True)
 
-dv = dv[dv['BORO']!='`']
-dv['BORO'] = dv['BORO'].apply(lambda x: int(x))
-dv = dv.dropna()
-dv = dv[dv['BORO']!=0]
+dv.drop(columns=['BORO','BLOCK','LOT','ISSUE_YEAR', 'ISSUE_MONTH', 'ISSUE_DAY', 'ISSUE_DATE_NEW', 'vc'], inplace=True)
+dv.dropna(inplace=True)
 
-dv = dv.dropna()
+dv['BIN'] = dv['BIN'].apply(lambda x: int(x))
 
-numbers = re.compile('\d+')
-#? dv['blockre'] = dv['BLOCK'].str.findall(numbers)
+dv['binlength'] = dv['BIN'].apply(lambda x: len(str(x)))
+dv = dv[dv['binlength'] == 7]
+dv.reset_index(drop=True,inplace=True)
+
+dv.drop(columns='binlength',inplace=True)
+dv.to_csv('~/mcnulty/dob_viol.csv')
+
+### cleaning 311
+import pandas as pd
+pd.set_option('display.float_format', lambda x: '%.2f' % x)
+
+paths = []
+for i in range(0,188):
+    path = '~/mcnulty/chunk' + str(i) + '.csv'
+    paths.append(path)
+
+for each in paths:
+    df = pd.read_csv(each, usecols=['Unique Key', 'Created Date', 'Agency', 'Complaint Type', 'Descriptor', 'Location Type', 'Status', 'BBL', 'Borough', 'X Coordinate (State Plane)', 'Y Coordinate (State Plane)', 'Latitude', 'Longitude', 'Location'])
+    df = df[~df['BBL'].isna()]
+    df['Created Date'] = pd.to_datetime(df['Created Date'])
+    df.drop_duplicates(inplace=True)
+    df.to_csv(each)
+    del df
+
+dfs = []
+for each in paths:
+    df = pd.read_csv(each)
+    dfs.append(df)
+
+threeoneone = pd.concat(dfs)
+
+threeoneone.drop_duplicates(inplace=True)
+
+threeoneone.drop(columns='Unnamed: 0', inplace=True)
+threeoneone.reset_index(drop=True)
+
+threeoneone['Created Date'] = pd.to_datetime(threeoneone['Created Date'])
+
+threeoneone.to_csv('~/mcnulty/311.csv')
+
+### cleaning dob complaints
+dc = pd.read_csv('~/mcnulty/dob_complaints.csv')
+dc = dc[['Complaint Number', 'Status', 'Date Entered', 'BIN', 'Complaint Category']]
+dc['Date Entered'] = pd.to_datetime(dc['Date Entered'])
+dc.to_csv('~/mcnulty/dob_complaints.csv')
+
+### cleaning hv
+hv = pd.read_csv('~/mcnulty/hmc_viol.csv')
+import re
+date = re.compile('[0-1][0-9]/[0-3][0-9]/[1-2][0-9][0-9][0-9]')
+hv = hv[hv['InspectionDate'].str.contains(date)]
+hv = hv[hv['ApprovedDate'].str.contains(date)]
+
+hv['InspectionDate'] = pd.to_datetime(hv['InspectionDate'], format='%m/%d/%Y')
+hv['ApprovedDate'] = pd.to_datetime(hv['ApprovedDate'], format='%m/%d/%Y')
+hv.drop(columns='Unnamed: 0', inplace=True)
+hv.to_csv('~/mcnulty/hmc_viol.csv')
+
+### building bbl file for baseline
+
+import pandas as pd
+bbl = pd.read_csv('~/mcnulty/bbl.csv')
+
+#housing lit data
+hl = pd.read_csv('~/mcnulty/housing_litigations.csv')
+hlbbls = dict(hl['BBL'].value_counts())
+bbl['lits'] = 0
+for i in bbl.index:
+    if bbl.at[i,'BBL'] in hlbbls:
+        bbl.at[i, 'lits'] = hlbbls[bbl.at[i,'BBL']]
+    else:
+        pass
+bbl['has_lit'] = 0
+for i in bbl.index:
+    if bbl.at[i,'lits'] > 0:
+        bbl.at[i, 'has_lit'] = 1
+    else:
+        pass
+del hl
+del hlbbls
+
+#311 complaints
+t = pd.read_csv('~/mcnulty/311.csv')
+t['BBL'] = t['BBL'].apply(lambda x: int(x))
+tbbls = dict(t['BBL'].value_counts())
+bbl['311'] = 0
+for i in bbl.index:
+    if bbl.at[i,'BBL'] in tbbls:
+        bbl.at[i, '311'] = tbbls[bbl.at[i,'BBL']]
+    else:
+        pass
+del t
+
+#hmc violations
+hv = pd.read_csv('~/mcnulty/hmc_viol.csv')
+hvbbls = dict(hv['BBL'].value_counts())
+bbl['hmc_v'] = 0
+for i in bbl.index:
+    if bbl.at[i,'BBL'] in hvbbls:
+        bbl.at[i, 'hmc_v'] = hvbbls[bbl.at[i,'BBL']]
+    else:
+        pass
+del hv
+
+#hmc complaints
+hc = pd.read_csv('~/mcnulty/hmc_complaints.csv')
+
+hcbbls = dict(hc['BBL'].value_counts())
+
+bbl['hmc_c'] = 0
+
+for i in bbl.index:
+    if bbl.at[i,'BBL'] in hcbbls:
+        bbl.at[i, 'BBL'] = hcbbls[bbl.at[i,'BBL']]
+    else:
+        pass
+del hc
+
+#
+
+
+
+
+pluto = pd.read_csv('~/mcnulty/pluto.csv')
+pluto.drop(columns='Unnamed: 0', inplace=True)
+bbl.drop(columns='Unnamed: 0', inplace=True)
+pluto = pluto.merge(bbl, on='BBL')
+
+pluto.to_csv('mvpfile.csv')
