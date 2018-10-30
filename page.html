@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Housing</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <style>
+      .container {
+        max-width: 1000px;
+      }
+      body {
+        background-color: #e6ffff;
+        color: #33334d;
+        font-family: "Trebuchet MS",Helvetica,sans-serif
+      }
+    </style>
+  </head>
+  <body>
+    <br>
+    <div class="container">
+      <center><h1>Building Information</h1>
+        <br>
+      <form role="form" method='POST' action='/score'>
+        <div class="form-group">
+          <input type="text" name="url" class="form-control" id="url-box" placeholder="Enter Address" style="max-width: 300px;" autofocus required>
+        </div>
+        <button type="submit" class="btn btn-default">Submit</button>
+      </form></center>
+    </div>
+    <script src="//code.jquery.com/jquery-2.2.1.min.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+  </body>
+</html>

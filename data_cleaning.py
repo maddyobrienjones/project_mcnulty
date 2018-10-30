@@ -117,110 +117,56 @@ import pandas as pd
 pd.set_option('display.float_format', lambda x: '%.2f' % x)
 
 bk = pd.read_csv('~/mcnulty/PLUTO_for_WEB/BK_18v1.csv')
-bk = bk[['FireComp', 'PolicePrct', 'LandUse', 'OwnerType', 'LotArea', 'BldgArea', 'ComArea', 'ResArea', 'OfficeArea', 'RetailArea', 'GarageArea', 'StrgeArea', 'FactryArea', 'OtherArea', 'NumFloors', 'UnitsRes', 'UnitsTotal', 'LotType', 'BsmtCode', 'AssessTot', 'YearBuilt', 'YearAlter1', 'BoroCode', 'BBL', 'XCoord', 'YCoord']]
-bk.drop(columns=['XCoord', 'YCoord'], inplace=True)
-bk.drop(columns=['FireComp', 'PolicePrct', 'OwnerType'], inplace=True)
+bk = bk[['CD', 'CT2010','SchoolDist', 'Council', 'ZipCode', 'FireComp', 'PolicePrct', 'Address','BldgClass','LandUse','OwnerType','LotArea','BldgArea','ComArea','ResArea','OfficeArea','RetailArea','GarageArea','StrgeArea','FactryArea','OtherArea','NumFloors','UnitsRes','UnitsTotal','BsmtCode','AssessTot','YearBuilt','YearAlter1','YearAlter2','BoroCode','BBL','XCoord','YCoord','PFIRM15_FLAG']
+]
 
-#using 0 as unspecified value
 bk['LandUse'].fillna(0, inplace=True)
 
-#filling nulls with value for 'unknown'
-bk['LotType'].fillna(0, inplace=True)
-
-#filling nulls with value for unknown
 bk['BsmtCode'].fillna(5, inplace=True)
 
 bk.drop_duplicates(inplace=True)
+bk['PFIRM15_FLAG'].fillna(0,inplace=True)
+bk['OwnerType'].fillna('NA',inplace=True)
+bk['FireComp'].fillna('X000',inplace=True)
 bk.to_csv('~/mcnulty/pluto_bk.csv')
 
-
-bx = pd.read_csv('~/mcnulty/PLUTO_for_WEB/BX_18v1.csv')
-bx = bx[['FireComp', 'PolicePrct', 'LandUse', 'OwnerType', 'LotArea', 'BldgArea', 'ComArea', 'ResArea', 'OfficeArea', 'RetailArea', 'GarageArea', 'StrgeArea', 'FactryArea', 'OtherArea', 'NumFloors', 'UnitsRes', 'UnitsTotal', 'LotType', 'BsmtCode', 'AssessTot', 'YearBuilt', 'YearAlter1', 'BoroCode', 'BBL', 'XCoord', 'YCoord']]
-bx.drop(columns=['XCoord', 'YCoord'], inplace=True)
-bx.drop(columns=['FireComp', 'PolicePrct', 'OwnerType'], inplace=True)
-
-#using 0 as unspecified value
-bx['LandUse'].fillna(0, inplace=True)
-
-#filling nulls with value for 'unknown'
-bx['LotType'].fillna(0, inplace=True)
-
-#filling nulls with value for unknown
-bx['BsmtCode'].fillna(5, inplace=True)
-
-bx.drop_duplicates(inplace=True)
-
-bx.to_csv('~/mcnulty/pluto_bx.csv')
-
-
-mn = pd.read_csv('~/mcnulty/PLUTO_for_WEB/MN_18v1.csv')
-
-mn = mn[['FireComp', 'PolicePrct', 'LandUse', 'OwnerType', 'LotArea', 'BldgArea', 'ComArea', 'ResArea', 'OfficeArea', 'RetailArea', 'GarageArea', 'StrgeArea', 'FactryArea', 'OtherArea', 'NumFloors', 'UnitsRes', 'UnitsTotal', 'LotType', 'BsmtCode', 'AssessTot', 'YearBuilt', 'YearAlter1', 'BoroCode', 'BBL', 'XCoord', 'YCoord']]
-mn.drop(columns=['XCoord', 'YCoord'], inplace=True)
-mn.drop(columns=['FireComp', 'PolicePrct', 'OwnerType'], inplace=True)
-
-#using 0 as unspecified value
-mn['LandUse'].fillna(0, inplace=True)
-
-#filling nulls with value for 'unknown'
-mn['LotType'].fillna(0, inplace=True)
-
-#filling nulls with value for unknown
-mn['BsmtCode'].fillna(5, inplace=True)
-
-mn.drop_duplicates(inplace=True)
-mn.to_csv('~/mcnulty/pluto_mn.csv')
-
-qn = pd.read_csv('~/mcnulty/PLUTO_for_WEB/QN_18v1.csv')
-qn = qn[['FireComp', 'PolicePrct', 'LandUse', 'OwnerType', 'LotArea', 'BldgArea', 'ComArea', 'ResArea', 'OfficeArea', 'RetailArea', 'GarageArea', 'StrgeArea', 'FactryArea', 'OtherArea', 'NumFloors', 'UnitsRes', 'UnitsTotal', 'LotType', 'BsmtCode', 'AssessTot', 'YearBuilt', 'YearAlter1', 'BoroCode', 'BBL', 'XCoord', 'YCoord']]
-qn.drop(columns=['XCoord', 'YCoord'], inplace=True)
-qn.drop(columns=['FireComp', 'PolicePrct', 'OwnerType'], inplace=True)
-
-#using 0 as unspecified value
-qn['LandUse'].fillna(0, inplace=True)
-
-#filling nulls with value for 'unknown'
-qn['LotType'].fillna(0, inplace=True)
-
-#filling nulls with value for unknown
-qn['BsmtCode'].fillna(5, inplace=True)
-
-qn.drop_duplicates(inplace=True)
-qn.to_csv('~/mcnulty/pluto_qn.csv')
-
-
-si = pd.read_csv('~/mcnulty/PLUTO_for_WEB/SI_18v1.csv')
-si = si[['FireComp', 'PolicePrct', 'LandUse', 'OwnerType', 'LotArea', 'BldgArea', 'ComArea', 'ResArea', 'OfficeArea', 'RetailArea', 'GarageArea', 'StrgeArea', 'FactryArea', 'OtherArea', 'NumFloors', 'UnitsRes', 'UnitsTotal', 'LotType', 'BsmtCode', 'AssessTot', 'YearBuilt', 'YearAlter1', 'BoroCode', 'BBL', 'XCoord', 'YCoord']]
-si.drop(columns=['XCoord', 'YCoord'], inplace=True)
-si.drop(columns=['FireComp', 'PolicePrct', 'OwnerType'], inplace=True)
-
-#using 0 as unspecified value
-si['LandUse'].fillna(0, inplace=True)
-
-#filling nulls with value for 'unknown'
-si['LotType'].fillna(0, inplace=True)
-
-#filling nulls with value for unknown
-si['BsmtCode'].fillna(5, inplace=True)
-
-si.drop_duplicates(inplace=True)
-si.to_csv('~/mcnulty/pluto_si.csv')
+#import all
 
 pluto = pd.concat([si,bk,bx,mn,qn])
-pluto.drop(columns=['Unnamed: 0'], inplace=True)
 pluto.to_csv('~/mcnulty/pluto.csv')
 
 ###cleaning dob violations
 import pandas as pd
 pd.set_option('display.float_format', lambda x: '%.2f' % x)
 
-dv = pd.read_csv('~/mcnulty/dob_viol.csv')
+dv = pd.read_csv('~/mcnulty/dv_new.csv')
 dv.info()
 
 dv = dv[['ISN_DOB_BIS_VIOL', 'BORO', 'BIN', 'BLOCK', 'LOT', 'ISSUE_DATE', 'VIOLATION_TYPE_CODE', 'VIOLATION_CATEGORY']]
-dv = dv.dropna(axis=0)
+dv.dropna(inplace=True)
 
-dv['ISSUE_DATE'].value_counts()
+dv['BORO'] = dv['BORO'].apply(lambda x: str(x))
+dv['BORO'] = dv['BORO'].apply(lambda x: x.strip())
+dv['BORO'].isna().sum()
+
+dv['BORO'] = dv['BORO'].replace('M',1)
+dv['BORO'] = dv['BORO'].replace('Q',4)
+dv['BORO'] = dv['BORO'].replace('S',5)
+dv = dv[dv['BORO']!='`']
+dv = dv[dv['BORO']!='B']
+
+dv['BORO'] = pd.to_numeric(dv['BORO'], errors='coerce')
+
+dv['BORO'] = dv['BORO'].apply(lambda x: int(x))
+dv = dv[dv['BORO']!=0]
+
+dv['BLOCK'] = pd.to_numeric(dv['BLOCK'], errors='coerce')
+dv.dropna(inplace=True)
+dv['BLOCK'] = dv['BLOCK'].apply(lambda x: int(x))
+
+dv['LOT'] = pd.to_numeric(dv['LOT'], errors='coerce')
+dv.dropna(inplace=True)
+dv['LOT'] = dv['LOT'].apply(lambda x: int(x))
 
 dv['ISSUE_DATE'] = dv['ISSUE_DATE'].astype(str).replace(' ','')
 
@@ -279,20 +225,27 @@ mask = dv['vc'].isin(violcats)
 dv = dv[mask]
 dv['VIOLATION_CATEGORY'] = dv['vc']
 
+dv.drop(columns=['ISSUE_YEAR', 'ISSUE_MONTH', 'ISSUE_DAY', 'ISSUE_DATE_NEW', 'vc'], inplace=True)
+
+dv['bl'] = dv['BLOCK'].apply(lambda x: len(str(int(x))))
+dv['ll'] = dv['LOT'].apply(lambda x: len(str(int(x))))
+
+dv = dv[dv['ll']!=5]
+
+dv['BLOCK'] = dv['BLOCK'].apply(lambda x: str(int(x)))
+dv['BORO'] = dv['BORO'].apply(lambda x: str(int(x)))
+dv['LOT'] = dv['LOT'].apply(lambda x: str(int(x)))
+
+dv['BLOCK'] = dv['BLOCK'].str.pad(5,fillchar='0')
+dv['LOT'] = dv['LOT'].str.pad(4,fillchar='0')
+dv['BBL'] = dv['BORO']+dv['BLOCK']+dv['LOT']
+dv['BBL'] = dv['BBL'].astype(int)
+
 dv.dropna(inplace=True)
-dv.reset_index(drop=True, inplace=True)
 
-dv.drop(columns=['BORO','BLOCK','LOT','ISSUE_YEAR', 'ISSUE_MONTH', 'ISSUE_DAY', 'ISSUE_DATE_NEW', 'vc'], inplace=True)
-dv.dropna(inplace=True)
+dv.drop(columns=['BORO','BLOCK','LOT','bl','ll'],inplace=True)
 
-dv['BIN'] = dv['BIN'].apply(lambda x: int(x))
-
-dv['binlength'] = dv['BIN'].apply(lambda x: len(str(x)))
-dv = dv[dv['binlength'] == 7]
-dv.reset_index(drop=True,inplace=True)
-
-dv.drop(columns='binlength',inplace=True)
-dv.to_csv('~/mcnulty/dob_viol.csv')
+dv.to_csv('~/mcnulty/dob_complaints.csv')
 
 ### cleaning 311
 import pandas as pd
@@ -328,10 +281,15 @@ threeoneone['Created Date'] = pd.to_datetime(threeoneone['Created Date'])
 threeoneone.to_csv('~/mcnulty/311.csv')
 
 ### cleaning dob complaints
-dc = pd.read_csv('~/mcnulty/dob_complaints.csv')
-dc = dc[['Complaint Number', 'Status', 'Date Entered', 'BIN', 'Complaint Category']]
-dc['Date Entered'] = pd.to_datetime(dc['Date Entered'])
-dc.to_csv('~/mcnulty/dob_complaints.csv')
+dc = pd.read_csv('~/rows.csv')
+dc.drop_duplicates(inplace=True)
+dc = dc[['Complaint Number', 'Status', 'Date Entered', 'House Number','House Street', 'BIN', 'Community Board']]
+dc['Borough'] = dc['Community Board'].apply(lambda x: str(x)[0])
+dc = dc[dc['Borough']!=' ']
+dc['Borough'] = dc['Borough'].apply(lambda x: int(x))
+dc['Date Entered']=pd.to_datetime(dc['Date Entered'])
+dc.reset_index(inplace=True)
+dc.to_csv('~/mcnulty/dc.csv')
 
 ### cleaning hv
 hv = pd.read_csv('~/mcnulty/hmc_viol.csv')
@@ -416,3 +374,22 @@ bbl.drop(columns='Unnamed: 0', inplace=True)
 pluto = pluto.merge(bbl, on='BBL')
 
 pluto.to_csv('mvpfile.csv')
+
+
+#getting bbls for bins in dob complaints
+hv = pd.read_csv('~/mcnulty/hv.csv')
+binbbl = hv[['BIN','BBL']]
+binbbl.drop_duplicates(inplace=True)
+binbbl.drop_duplicates(subset='BIN',inplace=True)
+binbbl.drop_duplicates(subset='BBL',inplace=True)
+binbbls = dict()
+for i in binbbl.index:
+    binbbls[binbbl.at[i,'BIN']]=binbbl.at[i,'BBL']
+dc = pd.read_csv('~/mcnulty/dc.csv')
+dc['BBL']=None
+for i in dc.index:
+    if dc.at[i,'BIN'] in binbbls:
+        dc.at[i,'BBL']=binbbls[dc.at[i,'BIN']]
+dc.drop(columns=['House Number','House Street'], inplace=True)
+dc.dropna(inplace=True)
+dc.to_csv('~/mcnulty/dc_w_bbls.csv')
