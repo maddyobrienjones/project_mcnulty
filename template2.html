@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Housing</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <style>
+      .container {
+        max-width: 1000px;
+      }
+      body {
+        background-color: #e6ffff;
+        color: #33334d;
+        font-family: "Trebuchet MS",Helvetica,sans-serif
+      }
+      table, th, td {
+        border: 2px solid #33334d;
+        padding: 15px;
+      }
+      tr:nth-child(even) {background-color:#b3ffff}
+
+    </style>
+  </head>
+  <body>
+    <center><h1>{{ address }}</h1>
+      <br>
+    <table border="1" cellpadding="10">
+    {% for x in results %}
+        <tr>
+          <td>{{ x[0] }}</td>
+          <td>{{ x[1] }}</td>
+        </tr>
+    {% endfor %}
+    </table>
+ </center>
+ <script src="//code.jquery.com/jquery-2.2.1.min.js"></script>
+ <script src="//netdna.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+   </body>
+ </html>
