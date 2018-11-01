@@ -4,7 +4,7 @@ For this project at Metis, I used supervised learning (classification), Amazon W
 
 In this repo, I've uploaded my code, the data I used, and the presentation I gave at Metis on this project.  
   
-Read my blog post [here]!*
+Blog post is currently a work in progress.
   
 ## Repo Contents:   
 
@@ -28,11 +28,9 @@ Read my blog post [here]!*
 * [xgb.pkl](xgb.pkl) - pickled model to predict risk of litigation
 
 ### Presentation
+* [Predicting Housing Litigation.pdf](Predicting Housing Litigation.pdf) - powerpoint
 * [screen_recording.mov](screen_recording.mov) - demonstration of Flask app
 
 *work in progress
-
-
-[here]: 
 
 [NYC Open Data]: https://opendata.cityofnewyork.us/
