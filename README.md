@@ -28,7 +28,7 @@ Blog post is currently a work in progress.
 * [xgb.pkl](xgb.pkl) - pickled model to predict risk of litigation
 
 ### Presentation
-* [Predicting Housing Litigation.pdf](Predicting Housing Litigation.pdf) - powerpoint
+* [Predicting Housing Litigation.pdf]("Predicting Housing Litigation.pdf") - powerpoint
 * [screen_recording.mov](screen_recording.mov) - demonstration of Flask app
 
 *work in progress
