@@ -22,10 +22,10 @@
     </style>
   </head>
   <body>
-    <center><h1>{{ address }}</h1>
+    <center><h1>{{ address }}</h1> <!-- returns inputted address -->
       <br>
     <table border="1" cellpadding="10">
-    {% for x in results %}
+    {% for x in results %} <!-- loops through dictionary and creates one column of keys and one of values -->
         <tr>
           <td>{{ x[0] }}</td>
           <td>{{ x[1] }}</td>
