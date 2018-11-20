@@ -5,36 +5,45 @@ import pandas as pd
 df = pd.read_csv('~/mcnulty/dob_ecb_viol.csv', usecols=['ISN_DOB_BIS_EXTRACT', 'ECB_VIOLATION_STATUS', 'BIN', 'BORO', 'BLOCK', 'LOT', 'ISSUE_DATE', 'SEVERITY', 'VIOLATION_TYPE', 'AGGRAVATED_LEVEL', 'CERTIFICATION_STATUS'])
 pd.set_option('display.float_format', lambda x: '%.2f' % x)
 
+#if empty, fill with negative values
 df['AGGRAVATED_LEVEL'].fillna('NO', inplace=True)
 df['CERTIFICATION_STATUS'].fillna('NO COMPLIANCE RECORDED', inplace=True)
 
 df.drop_duplicates(inplace=True)
 
+#getting rid of spaces
 dev['ISSUE_DATE'] = dev['ISSUE_DATE'].astype(str).replace(' ','')
 
 import re
+#normalizing date
 date_re = re.compile('[1-2][0-9][0-9][0-9][0-9][0-9][0-3][0-9]')
 dev = dev[dev['ISSUE_DATE'].str.contains(date_re)]
 
+#extracting year
 dev['ISSUE_YEAR'] = dev['ISSUE_DATE'].str[0:4]
 dev['ISSUE_YEAR'] = dev['ISSUE_YEAR'].astype(int, inplace=True)
+#making sure years make sense
 mask1 = dev['ISSUE_YEAR'] > 1899
 mask2 = dev['ISSUE_YEAR'] < 2019
 dev = dev[mask1 & mask2]
 
+#extracting month and day
 dev['ISSUE_MONTH'] = dev['ISSUE_DATE'].astype(str).str[4:6]
 dev['ISSUE_DAY'] = dev['ISSUE_DATE'].astype(str).str[6:]
 
 dev['ISSUE_YEAR'] = dev['ISSUE_YEAR'].astype(str)
 
+#making sure month and day make sense
 mask1 = dev['ISSUE_DAY'].astype(int) < 31
 mask2 = dev['ISSUE_MONTH'].astype(int) < 12
 dev = dev[mask1 & mask2]
 
+#list of months with different days
 thirtyone = [1,3,5,7,8,10,12]
 thirty = [4,6,9,11]
 twentynine = [2]
 
+#sanity check to make sure all month make sense/fixing to latest day possible if larger than expected
 mask1 = dev['ISSUE_DAY'].astype(int) > 29
 mask2 = dev['ISSUE_DAY'].astype(int) > 30
 mask3 = dev['ISSUE_DAY'].astype(int) > 31
@@ -47,14 +56,19 @@ dev[dev[mask1 & mask6]]['ISSUE_DAY']=29
 dev[dev[mask2 & mask5]]['ISSUE_DAY']=30
 dev[dev[mask3 & mask4]]['ISSUE_DAY']=31
 
+#formatting date to convert to datetime format
 dev['ISSUE_DATE_NEW'] = dev['ISSUE_MONTH'].astype(str) + '/' + dev['ISSUE_DAY'].astype(str) + '/' + dev['ISSUE_YEAR'].astype(str)
 
 dev['ISSUE_DATE'] = pd.to_datetime(dev['ISSUE_DATE_NEW'], format='%m/%d/%Y', errors='coerce')
 
 dev.head()
 
+#dropping old columns
 dev.drop(columns=['ISSUE_YEAR', 'ISSUE_MONTH', 'ISSUE_DAY', 'ISSUE_DATE_NEW'], inplace=True)
+
+#no 6th borough
 dev = dev[dev['BORO']!=6]
+#not useful
 dev.drop(columns=['BORO', 'BLOCK', 'LOT'], inplace=True)
 
 df = df.reset_index(drop=True)
@@ -68,18 +82,22 @@ del df
 import pandas as pd
 pd.set_option('display.float_format', lambda x: '%.2f' % x)
 
+#reformatting
 hl = pd.read_csv('~/mcnulty/housing_litigations.csv')
 hl['Boro'] = hl['Boro'].astype(str)
 hl['Block'] = hl['Block'].astype(str)
 hl['Lot'] = hl['Lot'].astype(str)
 
+#creating BBL
 hl['Block'] = hl['Block'].str.pad(5,fillchar='0')
 hl['Lot'] = hl['Lot'].str.pad(4,fillchar='0')
 hl['BBL2'] = hl['Boro']+hl['Block']+hl['Lot']
 hl['BBL'] = hl['BBL2'].astype(int)
 
+#converting to datetime
 hl['CaseOpenDate'] = pd.to_datetime(hl['CaseOpenDate'])
 
+#dropping extraneous information
 hl.drop(columns=['BuildingID', 'HouseNumber', 'StreetName', 'Zip', 'Block', 'Lot', 'OpenJudgement', 'Latitude', 'Longitude', 'BBL2', 'NTA','FindingOfHarassment','FindingDate','Penalty','Respondent','Community District', 'Council District', 'Census Tract', 'BIN'], inplace=True)
 hl.reset_index(drop=True, inplace=True)
 hl.to_csv('~/mcnulty/housing_litigations.csv')
@@ -94,7 +112,7 @@ hmcc.drop_duplicates(inplace=True)
 hmcc.info()
 
 hmcc['BoroughID'].value_counts()
-
+#creating BBL
 hmcc['BoroughID'] = hmcc['BoroughID'].astype(str)
 hmcc['Block'] = hmcc['Block'].astype(str)
 hmcc['Lot'] = hmcc['Lot'].astype(str)
@@ -105,7 +123,7 @@ hmcc['BBL'] = hmcc['BoroughID']+hmcc['Block']+hmcc['Lot']
 hmcc['BBL'] = hmcc['BBL'].astype(int)
 
 hmcc.info()
-
+#dropping unnecessary columns
 hmcc = hmcc[['ComplaintID', 'BuildingID', 'BBL', 'ReceivedDate', 'Status']]
 
 hmcc.info()
@@ -120,6 +138,7 @@ bk = pd.read_csv('~/mcnulty/PLUTO_for_WEB/BK_18v1.csv')
 bk = bk[['CD', 'CT2010','SchoolDist', 'Council', 'ZipCode', 'FireComp', 'PolicePrct', 'Address','BldgClass','LandUse','OwnerType','LotArea','BldgArea','ComArea','ResArea','OfficeArea','RetailArea','GarageArea','StrgeArea','FactryArea','OtherArea','NumFloors','UnitsRes','UnitsTotal','BsmtCode','AssessTot','YearBuilt','YearAlter1','YearAlter2','BoroCode','BBL','XCoord','YCoord','PFIRM15_FLAG']
 ]
 
+#fill with negative values
 bk['LandUse'].fillna(0, inplace=True)
 
 bk['BsmtCode'].fillna(5, inplace=True)
@@ -130,7 +149,7 @@ bk['OwnerType'].fillna('NA',inplace=True)
 bk['FireComp'].fillna('X000',inplace=True)
 bk.to_csv('~/mcnulty/pluto_bk.csv')
 
-#import all
+#import all boroughs and concatenate
 
 pluto = pd.concat([si,bk,bx,mn,qn])
 pluto.to_csv('~/mcnulty/pluto.csv')
@@ -141,10 +160,11 @@ pd.set_option('display.float_format', lambda x: '%.2f' % x)
 
 dv = pd.read_csv('~/mcnulty/dv_new.csv')
 dv.info()
-
+#dropping unnecessary columns
 dv = dv[['ISN_DOB_BIS_VIOL', 'BORO', 'BIN', 'BLOCK', 'LOT', 'ISSUE_DATE', 'VIOLATION_TYPE_CODE', 'VIOLATION_CATEGORY']]
 dv.dropna(inplace=True)
 
+#creating BBL
 dv['BORO'] = dv['BORO'].apply(lambda x: str(x))
 dv['BORO'] = dv['BORO'].apply(lambda x: x.strip())
 dv['BORO'].isna().sum()
@@ -168,6 +188,7 @@ dv['LOT'] = pd.to_numeric(dv['LOT'], errors='coerce')
 dv.dropna(inplace=True)
 dv['LOT'] = dv['LOT'].apply(lambda x: int(x))
 
+#reformatting date
 dv['ISSUE_DATE'] = dv['ISSUE_DATE'].astype(str).replace(' ','')
 
 import re
@@ -211,6 +232,7 @@ dv['ISSUE_DATE'] = pd.to_datetime(dv['ISSUE_DATE_NEW'], format='%m/%d/%Y', error
 
 dv.dropna(inplace=True)
 
+#trying to get consistent values for violation category
 dv['vc'] = dv['VIOLATION_CATEGORY'].str.split('-').apply(lambda x:x[-1])
 dv['vc'] = dv['vc'].str.strip()
 dv['vc'] = dv['vc'].str.split()
@@ -231,7 +253,7 @@ dv['bl'] = dv['BLOCK'].apply(lambda x: len(str(int(x))))
 dv['ll'] = dv['LOT'].apply(lambda x: len(str(int(x))))
 
 dv = dv[dv['ll']!=5]
-
+#getting BBL
 dv['BLOCK'] = dv['BLOCK'].apply(lambda x: str(int(x)))
 dv['BORO'] = dv['BORO'].apply(lambda x: str(int(x)))
 dv['LOT'] = dv['LOT'].apply(lambda x: str(int(x)))
@@ -243,6 +265,7 @@ dv['BBL'] = dv['BBL'].astype(int)
 
 dv.dropna(inplace=True)
 
+#drop unnecessary columns
 dv.drop(columns=['BORO','BLOCK','LOT','bl','ll'],inplace=True)
 
 dv.to_csv('~/mcnulty/dob_complaints.csv')
@@ -251,11 +274,13 @@ dv.to_csv('~/mcnulty/dob_complaints.csv')
 import pandas as pd
 pd.set_option('display.float_format', lambda x: '%.2f' % x)
 
+#have to load in chunks so creating paths for all files
 paths = []
 for i in range(0,188):
     path = '~/mcnulty/chunk' + str(i) + '.csv'
     paths.append(path)
 
+#loading in chunks and cleaning by getting rid of complaints not associated with specific building
 for each in paths:
     df = pd.read_csv(each, usecols=['Unique Key', 'Created Date', 'Agency', 'Complaint Type', 'Descriptor', 'Location Type', 'Status', 'BBL', 'Borough', 'X Coordinate (State Plane)', 'Y Coordinate (State Plane)', 'Latitude', 'Longitude', 'Location'])
     df = df[~df['BBL'].isna()]
@@ -264,6 +289,7 @@ for each in paths:
     df.to_csv(each)
     del df
 
+#concatenating chunks
 dfs = []
 for each in paths:
     df = pd.read_csv(each)
@@ -283,10 +309,14 @@ threeoneone.to_csv('~/mcnulty/311.csv')
 ### cleaning dob complaints
 dc = pd.read_csv('~/rows.csv')
 dc.drop_duplicates(inplace=True)
+#dropping unnecessary columns
 dc = dc[['Complaint Number', 'Status', 'Date Entered', 'House Number','House Street', 'BIN', 'Community Board']]
+
+#getting borough
 dc['Borough'] = dc['Community Board'].apply(lambda x: str(x)[0])
 dc = dc[dc['Borough']!=' ']
 dc['Borough'] = dc['Borough'].apply(lambda x: int(x))
+
 dc['Date Entered']=pd.to_datetime(dc['Date Entered'])
 dc.reset_index(inplace=True)
 dc.to_csv('~/mcnulty/dc.csv')
@@ -294,6 +324,7 @@ dc.to_csv('~/mcnulty/dc.csv')
 ### cleaning hv
 hv = pd.read_csv('~/mcnulty/hmc_viol.csv')
 import re
+#getting violations associated with date and reformatting dates
 date = re.compile('[0-1][0-9]/[0-3][0-9]/[1-2][0-9][0-9][0-9]')
 hv = hv[hv['InspectionDate'].str.contains(date)]
 hv = hv[hv['ApprovedDate'].str.contains(date)]
@@ -303,13 +334,9 @@ hv['ApprovedDate'] = pd.to_datetime(hv['ApprovedDate'], format='%m/%d/%Y')
 hv.drop(columns='Unnamed: 0', inplace=True)
 hv.to_csv('~/mcnulty/hmc_viol.csv')
 
-### building bbl file for baseline
-
-import pandas as pd
-bbl = pd.read_csv('~/mcnulty/bbl.csv')
-
 #housing lit data
 hl = pd.read_csv('~/mcnulty/housing_litigations.csv')
+#getting number of litigations for each building
 hlbbls = dict(hl['BBL'].value_counts())
 bbl['lits'] = 0
 for i in bbl.index:
@@ -318,6 +345,7 @@ for i in bbl.index:
     else:
         pass
 bbl['has_lit'] = 0
+#if building has litigation, 1
 for i in bbl.index:
     if bbl.at[i,'lits'] > 0:
         bbl.at[i, 'has_lit'] = 1
@@ -342,6 +370,7 @@ del t
 hv = pd.read_csv('~/mcnulty/hmc_viol.csv')
 hvbbls = dict(hv['BBL'].value_counts())
 bbl['hmc_v'] = 0
+#getting number of violations
 for i in bbl.index:
     if bbl.at[i,'BBL'] in hvbbls:
         bbl.at[i, 'hmc_v'] = hvbbls[bbl.at[i,'BBL']]
@@ -355,7 +384,7 @@ hc = pd.read_csv('~/mcnulty/hmc_complaints.csv')
 hcbbls = dict(hc['BBL'].value_counts())
 
 bbl['hmc_c'] = 0
-
+#getting number of hmc complaints
 for i in bbl.index:
     if bbl.at[i,'BBL'] in hcbbls:
         bbl.at[i, 'BBL'] = hcbbls[bbl.at[i,'BBL']]
@@ -363,10 +392,7 @@ for i in bbl.index:
         pass
 del hc
 
-#
-
-
-
+#for mvp analysis
 
 pluto = pd.read_csv('~/mcnulty/pluto.csv')
 pluto.drop(columns='Unnamed: 0', inplace=True)
